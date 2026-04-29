@@ -9,9 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - run: sudo xcode-select -s /Applications/Xcode_15.4.app
+    - run: find . -name "*.xcodeproj" -maxdepth 4
     - run: |
         xcodebuild \
-          -project JSRunner.xcodeproj \
+          -project JSRunner/JSRunner.xcodeproj \
           -scheme JSRunner \
           -configuration Release \
           -sdk iphoneos \
