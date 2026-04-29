@@ -1,0 +1,31 @@
+name: Build IPA
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+    - run: sudo xcode-select -s /Applications/Xcode_15.4.app
+    - run: |
+        xcodebuild \
+          -project JSRunner.xcodeproj \
+          -scheme JSRunner \
+          -configuration Release \
+          -sdk iphoneos \
+          -derivedDataPath DerivedData \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          DEVELOPMENT_TEAM="" \
+          clean build
+    - run: |
+        mkdir -p Payload
+        cp -r DerivedData/Build/Products/Release-iphoneos/JSRunner.app Payload/
+        zip -r JSRunner.ipa Payload
+    - uses: actions/upload-artifact@v4
+      with:
+        name: JSRunner-IPA
+        path: JSRunner.ipa
